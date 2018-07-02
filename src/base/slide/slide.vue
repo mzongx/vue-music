@@ -49,6 +49,9 @@ export default {
       }
     })
   },
+  destroyed() {
+    clearTimeout(this.timer)
+  },
   methods: {
     init() {
       this._initWidth()

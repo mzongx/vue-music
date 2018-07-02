@@ -31,10 +31,13 @@ export default {
 <style scoped lang="stylus">
   @import "~common/stylus/variable"
   .tab
-      display flex
-      height 44px
-      line-height 44px
-      font-size 14px
+    position relative
+    display flex
+    height 44px
+    line-height 44px
+    font-size 14px
+    background-color $color-background
+    z-index 1
     .tab-item
       flex 1
       text-align center
