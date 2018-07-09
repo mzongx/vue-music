@@ -8,8 +8,7 @@ import './common/stylus/index.styl'
 
 Vue.use(VueLazyload, {
   preLoad: 1.3,
-  error: './common/images/default.png',
-  loading: './common/images/default.png',
+  loading: require('./common/images/default.png'),
   attempt: 1
 })
 

@@ -5,8 +5,8 @@
         <div class="slide-content" v-if="recommend.length">
           <Slide>
             <div v-for="(slideItem, index) in recommend" :key="index">
-              <a>
-                <img :src="slideItem.picUrl" />
+              <a :href="slideItem.linkUrl">
+                <img @load="loadImg" :src="slideItem.picUrl" />
               </a>
             </div>
           </Slide>
@@ -14,6 +14,9 @@
       </div>
       <div class="recommend-list">
         <h1>热门歌单推荐</h1>
+        <div class="loading-container" v-show="!descList.length">
+          <loading />
+        </div>
         <ul>
           <li v-for="(item, index) in descList" :key="index" class="item">
             <div class="icon">
@@ -35,6 +38,7 @@ import { getRecommend, getDescList } from '@/common/api/recommend'
 import { ERR_OK } from '@/common/api/config'
 import Slide from '@/base/slide/slide'
 import scrollView from '@/base/scrollView/scrollView'
+import loading from '@/base/loading/loading'
 export default {
   data() {
     return {
@@ -49,19 +53,21 @@ export default {
   methods: {
     _getRecommend() {
       getRecommend().then((res) => {
-        if (ERR_OK === 0) {
+        if (ERR_OK === res.code) {
           this.recommend = res.data.slider
         }
       })
     },
     _getDescList() {
       getDescList().then((res) => {
-        if (ERR_OK === 0) {
+        if (ERR_OK === res.code) {
           this.descList = res.data.list
+          this.showLoading = false
         }
       })
     },
     loadImg() {
+      // 优化旧版本的better-scroll,
       if (!this.checkLoadImg) {
         this.$refs.scroll.refresh()
         this.checkLoadImg = true
@@ -70,7 +76,8 @@ export default {
   },
   components: {
     Slide,
-    scrollView
+    scrollView,
+    loading
   }
 }
 </script>
