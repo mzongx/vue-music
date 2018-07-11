@@ -1,33 +1,35 @@
 <template>
   <div class="recommend-wrapper" ref="recommendWrapper">
     <scroll-view ref="scroll" class="recommend-content" :data="descList">
-      <div class="recommend-slide">
-        <div class="slide-content" v-if="recommend.length">
-          <Slide>
-            <div v-for="(slideItem, index) in recommend" :key="index">
-              <a :href="slideItem.linkUrl">
-                <img @load="loadImg" :src="slideItem.picUrl" />
-              </a>
-            </div>
-          </Slide>
+      <div>
+        <div class="recommend-slide">
+          <div class="slide-content" v-if="recommend.length">
+            <Slide>
+              <div v-for="(slideItem, index) in recommend" :key="index">
+                <a :href="slideItem.linkUrl">
+                  <img @load="loadImg" :src="slideItem.picUrl" />
+                </a>
+              </div>
+            </Slide>
+          </div>
         </div>
-      </div>
-      <div class="recommend-list">
-        <h1>热门歌单推荐</h1>
-        <div class="loading-container" v-show="!descList.length">
-          <loading />
+        <div class="recommend-list">
+          <h1>热门歌单推荐</h1>
+          <div class="loading-container" v-show="!descList.length">
+            <loading />
+          </div>
+          <ul>
+            <li v-for="(item, index) in descList" :key="index" class="item">
+              <div class="icon">
+                <img v-lazy="item.imgurl" />
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
         </div>
-        <ul>
-          <li v-for="(item, index) in descList" :key="index" class="item">
-            <div class="icon">
-              <img v-lazy="item.imgurl" />
-            </div>
-            <div class="text">
-              <h2 class="name" v-html="item.creator.name"></h2>
-              <p class="desc" v-html="item.dissname"></p>
-            </div>
-          </li>
-        </ul>
       </div>
     </scroll-view>
   </div>

@@ -1,8 +1,6 @@
 <template>
   <div ref="wrapper">
-    <div>
-      <slot />
-    </div>
+    <slot />
   </div>
 </template>
 
@@ -17,6 +15,10 @@ export default {
     probeType: {
       type: Number,
       default: 1
+    },
+    listenScroll: {
+      type: Boolean,
+      default: false
     },
     data: {
       // data变化需要刷新滚动条
@@ -40,6 +42,12 @@ export default {
         click: this.click,
         probeType: this.probeType
       })
+      if (this.listenScroll) {
+        let me = this
+        this.scroll.on('scroll', (pos) => {
+          me.$emit('scroll', pos)
+        })
+      }
     },
     refresh() {
       this.scroll && this.scroll.refresh()
@@ -48,7 +56,7 @@ export default {
   watch: {
     'data'() {
       setTimeout(() => {
-        this.refresh()
+        this.scroll.refresh()
       }, 20)
     }
   },
