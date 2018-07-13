@@ -1,5 +1,5 @@
 <template>
-  <scroll-view @scroll="scroll" :probeType="3" :listenScroll="true" :data="listData" class="list-view">
+  <scroll-view ref="scrollView" @scroll="scroll" :probeType="3" :listenScroll="true" :data="listData" class="list-view">
     <ul>
       <li class="list-group" v-for="(item, index) in listData" :key="index" ref="listGroup">
         <h2 class="list-group-title">{{ item.title }}</h2>
@@ -11,9 +11,9 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut">
+    <div class="list-shortcut" @touchstart="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"><!--因为是可触摸的，所以要监听touchstart-->
       <ul>
-        <li class="item" v-for="(item, index) in shortcutList" :key="index" :class="{'current': currentIndex === index}">{{ item }}</li>
+        <li class="item" v-for="(item, index) in shortcutList" :key="index" :data-index="index" :class="{'current': currentIndex === index}">{{ item }}</li>
       </ul>
     </div>
   </scroll-view>
@@ -21,6 +21,7 @@
 
 <script type="text/ecmascript-6">
 import scrollView from '@/base/scrollView/scrollView'
+import { attr } from '@/common/js/dom'
 export default {
   props: {
     listData: {
@@ -34,9 +35,6 @@ export default {
       currentIndex: 0
     }
   },
-  mounted() {
-    // this.scrollValue()
-  },
   computed: {
     shortcutList() {
       return this.listData.map((currentVal, index, arr) => {
@@ -49,6 +47,24 @@ export default {
       this.$nextTick(() => {
         this._calculateHeight()
       })
+    },
+    'scrollY'(newVal) {
+      // newVal > 0滚动条到达顶部
+      if (newVal > 0) {
+        this.currentIndex = 0
+      }
+      // 中间滚动
+      const listHeight = this.listHeight
+      let height = 0
+      let nextHeight = 0
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        height = listHeight[i]
+        nextHeight = listHeight[i + 1]
+        if ((-newVal >= height && -newVal < nextHeight)) {
+          this.currentIndex = i
+          return
+        }
+      }
     }
   },
   methods: {
@@ -62,9 +78,18 @@ export default {
     },
     scroll(pos) {
       this.$nextTick(() => {
-        this.scrollY = Math.ceil(Math.abs(pos.y))
-        console.log(this.scrollY)
+        this.scrollY = Math.ceil(pos.y)
       })
+    },
+    onShortcutTouchStart(e) {
+      let anchorIndex = attr(e.target, 'index')
+      this._scrollTo(anchorIndex)
+    },
+    onShortcutTouchMove(e) {
+      console.log(e)
+    },
+    _scrollTo(index) {
+      this.$refs.scrollView.scrollToElement(this.$refs.listGroup[index], 1000)
     }
   },
   components: {
