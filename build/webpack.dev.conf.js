@@ -49,7 +49,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
     before(app) {
       app.get('/api/getDescList', ((req, res) => {
-        // 绕过api验证，相当于模拟api自己的后台
+        // 绕过api验证，相当于模拟qq自己的后台
         axios.get('https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg', {
           headers: {
             referer: 'https://c.y.qq.com/',

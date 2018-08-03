@@ -3,7 +3,8 @@
     <div class="loading-container" v-show="!singerList.length">
       <loading />
     </div>
-    <list-view :list-data="singerList"></list-view>
+    <list-view :list-data="singerList" @selectSinger="chooseSinger"></list-view>
+    <router-view />
   </div>
 </template>
 
@@ -24,6 +25,9 @@ export default {
     this._getSingerList()
   },
   methods: {
+    chooseSinger(singer) {
+      this.$router.push({path: `/singer/${singer.id}`})
+    },
     _getSingerList() {
       getSingerList().then((res) => {
         if (ERR_OK === res.code) {
@@ -91,4 +95,5 @@ export default {
     position fixed
     bottom 0px
     top 88px
+    z-index 1
 </style>
