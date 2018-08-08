@@ -9,8 +9,10 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { mapMutations } from 'vuex'
 import { getSingerList } from 'common/api/singer'
 import { ERR_OK } from 'common/api/config'
+import Singer from 'common/js/singer'
 import listView from '@/base/listView/listView'
 import loading from '@/base/loading/loading'
 const HOT_NAME = '热门'
@@ -27,6 +29,7 @@ export default {
   methods: {
     chooseSinger(singer) {
       this.$router.push({path: `/singer/${singer.id}`})
+      this.setSinger(singer)
     },
     _getSingerList() {
       getSingerList().then((res) => {
@@ -34,14 +37,6 @@ export default {
           this.singerList = this._normalSingerList(res.data.list)
         }
       })
-    },
-    _singer(id, name) {
-      let obj = {
-        id: id,
-        name: name,
-        avatar: `https://y.gtimg.cn/music/photo_new/T001R150x150M000${id}.jpg?max_age=2592000`
-      }
-      return obj
     },
     _normalSingerList(list) {
       // 格式化singerList成目标格式
@@ -53,7 +48,11 @@ export default {
       }
       list.forEach((item, index) => {
         if (index < HOT_LIST_LEN) {
-          map.hot.items.push(this._singer(item.Fsinger_mid, item.Fsinger_name))
+          // 因为歌手经常用到，所以抽出单独一个类Singer
+          map.hot.items.push(new Singer({
+            id: item.Fsinger_mid,
+            name: item.Fsinger_name
+          }))
         }
         let key = item.Findex
         // 没有key才添加，有的话就跳过
@@ -63,7 +62,10 @@ export default {
             items: []
           }
         }
-        map[key].items.push(this._singer(item.Fsinger_mid, item.Fsinger_name))
+        map[key].items.push(new Singer({
+          id: item.Fsinger_mid, 
+          name: item.Fsinger_name
+        }))
       })
       // object是无序的，所以需要把数据转为有序的array
       let arrHot = []
@@ -80,7 +82,11 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return arrHot.concat(arr)
-    }
+    },
+    ...mapMutations({
+      // mutations是唯一改变state的操作，这里获取到歌手信息。
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     listView,
