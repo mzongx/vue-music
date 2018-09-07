@@ -19,3 +19,35 @@ export function attr(el, name, val) {
     return el.getAttribute(name)
   }
 }
+
+// 获取一个div的style，通过这个来判断浏览器支持哪个特性
+const elementStyle = document.createElement('div').style
+// 获取一下浏览器厂商
+let vendor = (() => {
+  let transformNames = {
+    webkit: 'webkitTransform',
+    Moz: 'MozTransform',
+    Ms: 'MsTransform',
+    O: 'OTransform',
+    standard: 'transform'
+  }
+
+  for (let key in transformNames) {
+    if (elementStyle[transformNames[key]] !== 'undefined') {
+      return key
+    }
+  }
+
+  return false
+})()
+
+export function prefixStyle(style) {
+  if (vendor === false) {
+    return false
+  }
+
+  if (vendor === 'standard') {
+    return style
+  }
+  return vendor + style.charAt(0).toUpperCase() + style.substr(1)
+}

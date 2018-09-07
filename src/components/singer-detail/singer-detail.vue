@@ -1,8 +1,9 @@
 <template>
   <transition name="slide">
-    <div class="singer-detail">
-      singer-detail
-    </div>
+    <MusicList
+      :title="title"
+      :bg-image="bgImage"
+      :songs="songs" />
   </transition>
 </template>
 
@@ -11,6 +12,7 @@ import { mapGetters } from 'vuex'
 import { getSingerDetail } from 'common/api/singer'
 import { ERR_OK } from 'common/api/config'
 import { createSong } from 'common/js/song'
+import MusicList from '@/components/music-list/music-list'
 export default {
   data() {
     return {
@@ -21,9 +23,16 @@ export default {
     this._getSingerDetail(this.singer.id)
   },
   computed: {
+    // mapGetters是vuex提供的一个获取state的语法糖
     ...mapGetters([
       'singer'
-    ])
+    ]),
+    title() {
+      return this.singer.name
+    },
+    bgImage() {
+      return this.singer.avatar
+    }
   },
   methods: {
     _getSingerDetail(id) {
@@ -35,7 +44,7 @@ export default {
       getSingerDetail(id).then((res) => {
         if (ERR_OK === res.code) {
           this.songs = this._normalizeSong(res.data.list)
-          console.log(this.songs)
+          console.log(res.data.list)
         }
       })
     },
@@ -52,21 +61,13 @@ export default {
     }
   },
   components: {
-
+    // 因为歌曲列表页好几个页面都用到，所以抽出来共享
+    MusicList
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import '~common/stylus/variable'
-  .singer-detail
-    position fixed
-    left 0px
-    top 0px
-    right 0px
-    bottom 0px
-    z-index 100
-    background $color-background
   .slide-enter-active,.slide-leave-active
     transition transform .3s ease
   .slide-enter,.slide-leave-to

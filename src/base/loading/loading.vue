@@ -27,6 +27,7 @@ export default {
 <style scoped lang="stylus">
   @import '~common/stylus/variable'
   .loading
+    padding 10px
     text-align center
     .des
       line-height 20px
