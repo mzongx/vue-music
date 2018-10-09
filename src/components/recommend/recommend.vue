@@ -4,13 +4,13 @@
       <div>
         <div class="recommend-slide">
           <div class="slide-content" v-if="recommend.length">
-            <Slide>
+            <Slider ref="slider">
               <div v-for="(slideItem, index) in recommend" :key="index">
                 <a :href="slideItem.linkUrl">
                   <img @load="loadImg" :src="slideItem.picUrl" />
                 </a>
               </div>
-            </Slide>
+            </Slider>
           </div>
         </div>
         <div class="recommend-list">
@@ -38,7 +38,7 @@
 <script type="text/ecmascript-6">
 import { getRecommend, getDescList } from '@/common/api/recommend'
 import { ERR_OK } from '@/common/api/config'
-import Slide from '@/base/slide/slide'
+import Slider from '@/base/slider/slider'
 import scrollView from '@/base/scrollView/scrollView'
 import loading from '@/base/loading/loading'
 export default {
@@ -71,13 +71,13 @@ export default {
     loadImg() {
       // 优化旧版本的better-scroll,
       if (!this.checkLoadImg) {
-        this.$refs.scroll.refresh()
+        this.$refs.slider.refresh()
         this.checkLoadImg = true
       }
     }
   },
   components: {
-    Slide,
+    Slider,
     scrollView,
     loading
   }

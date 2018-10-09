@@ -5,23 +5,28 @@ const mutations = {
     // 设置歌手信息
     state.singer = singer
   },
-  [types.SET_PLAYING](state, flag) {
+  [types.SET_PLAYING_STATE](state, flag) {
     // 设置播放状态
     state.playing = flag
   },
   [types.SET_FULL_SCREEN](state, flag) {
+    // 是否全屏播放器
     state.fullScreen = flag
   },
   [types.SET_PLAY_LIST](state, list) {
+    // 播放列表
     state.playList = list
   },
   [types.SET_CURRENT_INDEX](state, index) {
+    // 当前索引
     state.currentIndex = index
   },
   [types.SET_MODE](state, mode) {
+    // 播放模式
     state.mode = mode
   },
   [types.SET_SEQUANCE_LIST](state, list) {
+    // 原始列表
     state.sequanceList = list
   }
 }

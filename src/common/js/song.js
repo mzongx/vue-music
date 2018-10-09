@@ -1,3 +1,6 @@
+import { getLyric } from '@/common/api/song'
+import { ERR_OK } from '@/common/api/config'
+import { Base64 } from 'js-base64'
 // 封装一个Song类，这样多个页面都可以抽取这样的结构
 export default class Song {
   constructor ({id, mid, singer, name, album, duration, image, url}) {
@@ -9,6 +12,23 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+
+  getLyric() {
+    // 因为每次创建歌曲都要去请求一次，为了避免这种情况，这里加一个判断，有歌词就返回歌词
+    if (this.lyric) {
+      return Promise.resolve(this.lyric)
+    }
+    // 没有歌词就去请求
+    return new Promise((resolve, reject) => {
+      getLyric(this.mid).then((res) => {
+        if (res.retcode === ERR_OK) {
+          resolve(Base64.decode(res.lyric))
+        } else {
+          reject(new Error('error'))
+        }
+      })
+    })
   }
 }
 

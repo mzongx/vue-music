@@ -37,6 +37,7 @@ export function getDescList() {
     sin: 0,
     ein: 29
   })
+  // 因為QQ音樂做了验证，所以通过axios可以绕过验证
   return axios.get(url, {
     params: data
   }).then((responed) => {

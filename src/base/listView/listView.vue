@@ -206,6 +206,7 @@ export default {
       transform translate3d(0, -50%, 0)
       background-color $color-background-d
       text-align center
+      z-index 1
       .item
         padding 3px
         font-size $font-size-small

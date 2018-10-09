@@ -62,6 +62,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(err)
         })
       }))
+
+      app.get('/api/lyric', ((req, res) => {
+        // 绕过api验证，相当于模拟qq自己的后台
+        axios.get('https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg', {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((responed) => {
+          // 这里返回的数据QQ音乐返回的是'MusicJsonCallback({\"retcode\":0,\"code\":0,\"subcode\":0,\"lyric\":\"wwwkkkkkk",\"trans\":\"\"})'所以要转为json结构
+          let ret = responed.data
+          if (typeof ret === 'string') {
+            let reg = /^\w+\(({[^()]+})\)$/
+            let matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret) // res是输出给浏览器responed的data
+        }).catch((err) => {
+          console.log(err)
+        })
+      }))
     }
   },
   plugins: [
