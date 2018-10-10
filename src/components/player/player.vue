@@ -26,6 +26,9 @@
                 <img class="image" :src="currentSong.image" />
               </div>
             </div>
+            <div v-if="currentlyric" class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{ playingLyric }}</div>
+            </div>
           </div>
           <scrollView
             class="middle-r"
@@ -125,6 +128,7 @@ export default {
       currentTime: 0,
       currentlyricIndex: 0,
       currentlyric: null,
+      playingLyric: '',
       currentShow: 1
     }
   },
@@ -174,26 +178,27 @@ export default {
       if (newVal.id === oldVal.id) {
         return
       }
+      
+      // 解决切换歌词抖动
+      if (this.currentlyric) {
+        this.currentlyric.stop()
+      }
+
       this.$nextTick(() => {
         this.$refs.audio.play()
         this.getLyric()
       })
+      // 解决微信退出后台播放
+      // 因为微信退出后台js是不执行的，但是audio还在播放，结束出发end的时候js执行不了
+      // setTimeout(() => {
+      //   this.$refs.audio.play()
+      //   this.getLyric()
+      // }, 1000);
     },
     playing(newPlaying) {
       const audio = this.$refs.audio
       this.$nextTick(() => {
-        // newPlaying ? audio.play() : audio.pause()
-        if (newPlaying) {
-          audio.play()
-          if (this.currentlyric) {
-            this.currentlyric.togglePlay()
-          }
-        } else {
-          audio.pause()
-          if (this.currentlyric) {
-            this.currentlyric.stop()
-          }
-        }
+        newPlaying ? audio.play() : audio.pause()
       })
     }
   },
@@ -330,6 +335,11 @@ export default {
         if (this.playing) {
           this.currentlyric.play()
         }
+      }).catch(() => {
+        // 获取不到歌曲的时候，做清理操作
+        this.currentlyric = null
+        this.playingLyric = ''
+        this.currentlyricIndex = 0
       })
     },
     handleLyric({lineNum, txt}) {
@@ -341,6 +351,7 @@ export default {
       } else {
         this.$refs.lyricScroll.scrollTo(0, 0, 1000)
       }
+      this.playingLyric = txt
     },
     changeMode() {
       let mode = (this.mode + 1) % 3
@@ -366,6 +377,10 @@ export default {
         return
       }
       this.setPlayingState(!this.playing)
+
+      if (this.currentlyric) {
+        this.currentlyric.togglePlay()
+      }
     },
     ended() {
       if (this.mode === playMode.loop) {
@@ -377,25 +392,36 @@ export default {
     loop() {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
+      if (this.currentlyric) {
+        this.currentlyric.seek(0)
+      }
     },
     next() {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index === this.playList.length) index = 0
-      this.setCurrentIndex(index)
-      if (!this.playing) this.togglePlaying()
+      // 如果歌曲列表只有一条的时候，就单曲循环播放
+      if (this.playList.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex + 1
+        if (index === this.playList.length) index = 0
+        this.setCurrentIndex(index)
+      }
       this.songReady = false
     },
     prev() {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex - 1
-      if (index === -1) index = this.playList.length - 1
-      this.setCurrentIndex(index)
-      if (!this.playing) this.togglePlaying()
+      // 如果歌曲列表只有一条的时候，就单曲循环播放
+      if (this.playList.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex - 1
+        if (index === -1) index = this.playList.length - 1
+        this.setCurrentIndex(index)
+      }
       this.songReady = false
     },
     ready() {
@@ -429,10 +455,12 @@ export default {
       // 监听进度条拖动或点击的百分比,重置currentTime
       this.currentTime = this.currentSong.duration * precent
       this.$refs.audio.currentTime = this.currentTime
+      if (!this.playing) {
+        this.togglePlaying()
+      }
       if (this.currentlyric) {
         this.currentlyric.seek(this.currentTime * 1000)
       }
-      if (!this.playing) this.togglePlaying()
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',

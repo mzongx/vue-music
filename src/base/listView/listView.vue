@@ -138,6 +138,9 @@ export default {
     selectItem(singer) {
       this.$emit('selectSinger', singer)
     },
+    refresh() {
+      this.$refs.scrollView.refresh()
+    },
     _calculateHeight() {
       let height = 0
       this.listHeight.push(height)

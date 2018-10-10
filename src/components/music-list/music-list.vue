@@ -39,10 +39,12 @@ import scrollView from '@/base/scrollView/scrollView'
 import loading from '@/base/loading/loading'
 import { prefixStyle } from '@/common/js/dom'
 import { mapActions } from 'vuex'
+import { playListMixin } from '@/common/js/mixins'
 const RESERVED_HEIGHT = 40 // 标题的高度，顶部滑动到达此高度就停止
 var transform = prefixStyle('transform')
 var backdrop = prefixStyle('backdrop-filter')
 export default {
+  mixins: [playListMixin],
   props: {
     title: {
       type: String,
@@ -80,6 +82,11 @@ export default {
     }
   },
   methods: {
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.List.$el.style.bottom = bottom
+      this.$refs.List.refresh()
+    },
     scroll(pos) {
       this.scrollY = Math.floor(pos.y)
     },

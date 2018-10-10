@@ -28,6 +28,10 @@ const mutations = {
   [types.SET_SEQUANCE_LIST](state, list) {
     // 原始列表
     state.sequanceList = list
+  },
+  [types.SET_DISC](state, disc) {
+    // 设置歌单详情
+    state.disc = disc
   }
 }
 export default mutations
