@@ -56,6 +56,7 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex'
+// create-keyframe-animation以css3写法写animation
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from '@/common/js/dom'
 const transform = prefixStyle('transform')
@@ -83,7 +84,6 @@ export default {
       this.setFullScreen(true)
     },
     enter(el, done) {
-      console.log('enter')
       const {x, y, scale} = this._getPosAndScale()
       const animation = {
         '0%': {
