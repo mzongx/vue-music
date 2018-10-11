@@ -48,6 +48,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll,
     },
     before(app) {
+      // 获取推荐歌单列表
       app.get('/api/getDescList', ((req, res) => {
         // 绕过api验证，相当于模拟qq自己的后台
         axios.get('https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg', {
@@ -58,6 +59,56 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           params: req.query
         }).then((responed) => {
           res.json(responed.data) // res是输出给浏览器responed的data
+        }).catch((err) => {
+          console.log(err)
+        })
+      }))
+
+      // 获取推荐歌单歌曲列表
+      app.get('/api/getDiscInfo', ((req, res) => {
+        // 绕过api验证，相当于模拟qq自己的后台
+        axios.get('https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg', {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((responed) => {
+          // res.json(responed.data) // res是输出给浏览器responed的data
+          let ret = responed.data
+          if (typeof ret === 'string') {
+            let reg = /^\w+\(({[^()]+})\)$/
+            let matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret) // res是输出给浏览器responed的data
+        }).catch((err) => {
+          console.log(err)
+        })
+      }))
+
+      // 获取歌词
+      app.get('/api/lyric', ((req, res) => {
+        // 绕过api验证，相当于模拟qq自己的后台
+        axios.get('https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg', {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((responed) => {
+          // 这里返回的数据QQ音乐返回的是'MusicJsonCallback({\"retcode\":0,\"code\":0,\"subcode\":0,\"lyric\":\"wwwkkkkkk",\"trans\":\"\"})'所以要转为json结构
+          let ret = responed.data
+          if (typeof ret === 'string') {
+            let reg = /^\w+\(({[^()]+})\)$/
+            let matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret) // res是输出给浏览器responed的data
         }).catch((err) => {
           console.log(err)
         })

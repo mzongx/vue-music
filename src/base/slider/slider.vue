@@ -63,6 +63,11 @@ export default {
         this._play()
       }
     },
+    refresh() {
+      if (this.slideScorll) {
+        this.slideScorll.refresh()
+      }
+    },
     _initWidth(isResize) {
       let slideWrapper = this.$refs.slideWrapper
       let clientWidth = slideWrapper.clientWidth
@@ -86,7 +91,9 @@ export default {
         scrollY: false,
         momentum: false,
         snap: {
-          loop: this.loop
+          loop: this.loop,
+          threshold: 0.3,
+          speed: 400
         }
       })
       this.slideScorll.on('scrollEnd', this._onScrollEnd)
@@ -97,6 +104,7 @@ export default {
       this.currentPageIndex = pageIndex
       // 每次滑动结束就执行autoPlay
       if (this.autoPlay) {
+        clearTimeout(this.timer)
         this._play()
       }
     },

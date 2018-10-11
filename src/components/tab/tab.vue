@@ -37,7 +37,6 @@ export default {
     line-height 44px
     font-size 14px
     background-color $color-background
-    z-index 1
     .tab-item
       flex 1
       text-align center

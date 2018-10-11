@@ -1,9 +1,9 @@
 <template>
-  <div class="singer">
+  <div class="singer" ref="singer">
     <div class="loading-container" v-show="!singerList.length">
       <loading />
     </div>
-    <list-view :list-data="singerList" @selectSinger="chooseSinger"></list-view>
+    <list-view ref="listView" :list-data="singerList" @selectSinger="chooseSinger"></list-view>
     <router-view />
   </div>
 </template>
@@ -15,9 +15,11 @@ import { ERR_OK } from 'common/api/config'
 import Singer from 'common/js/singer'
 import listView from '@/base/listView/listView'
 import loading from '@/base/loading/loading'
+import { playListMixin } from '@/common/js/mixins'
 const HOT_NAME = '热门'
 const HOT_LIST_LEN = 10
 export default {
+  mixins: [playListMixin],
   data() {
     return {
       singerList: []
@@ -27,6 +29,12 @@ export default {
     this._getSingerList()
   },
   methods: {
+    handlePlayList(playList) {
+      // 底部mini-player自适应
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.listView.refresh()
+    },
     chooseSinger(singer) {
       this.$router.push({path: `/singer/${singer.id}`})
       this.setSinger(singer)
