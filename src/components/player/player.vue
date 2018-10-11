@@ -218,7 +218,6 @@ export default {
 
       // 歌词滚动页面如果竖直滚动大于横向，则代表是在滚动歌词，不去换屏
       if (Math.abs(this.touches.deltaY) > Math.abs(this.touches.deltaX)) {
-        console.log('shuzhi')
         return
       }
       // 滑屏滚动的起始left

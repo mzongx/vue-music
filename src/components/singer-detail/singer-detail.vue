@@ -44,7 +44,6 @@ export default {
       getSingerDetail(id).then((res) => {
         if (ERR_OK === res.code) {
           this.songs = this._normalizeSong(res.data.list)
-          console.log(res.data.list)
         }
       })
     },
@@ -52,6 +51,7 @@ export default {
       // 格式化歌曲属性，目的是去掉一些不必要的
       let ret = []
       list.forEach(item => {
+        console.log(item)
         let {musicData} = item
         if (musicData.songid && musicData.albummid) {
           ret.push(createSong(musicData))
