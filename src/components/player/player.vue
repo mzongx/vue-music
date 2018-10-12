@@ -111,6 +111,7 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex'
+// create-keyframe-animation以css3写法写animation
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from '@/common/js/dom'
 import ProgressBar from '@/base/progress-bar/progress-bar'

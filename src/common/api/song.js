@@ -1,6 +1,10 @@
 import { commonParams } from './config'
 import axios from 'axios'
 
+/**
+ * 获取歌词
+ * @param {*} mid 
+ */
 export function getLyric(mid) {
   // 请求本地服务器，绕过qq音乐验证
   const url = '/api/lyric'
