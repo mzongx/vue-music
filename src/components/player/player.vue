@@ -233,6 +233,11 @@ export default {
     onTouchEnd() {
       let offsetWidth
       let opacity
+
+      // 歌词滚动页面如果竖直滚动大于横向，则代表是在滚动歌词，不去换屏
+      if (Math.abs(this.touches.deltaY) > Math.abs(this.touches.deltaX)) {
+        return
+      }
       if (this.currentShow === 1) {
         // 第一屏
         // 边界判断，如果小于10%就不滑动，超过才滑屏
@@ -243,7 +248,6 @@ export default {
         } else {
           offsetWidth = 0
           opacity = 1
-          this.currentShow = 1
         }
       } else if (this.currentShow === 2) {
         // 第二屏歌词
@@ -254,13 +258,13 @@ export default {
         } else {
           offsetWidth = -window.innerWidth
           opacity = 0
-          this.currentShow = 2
         }
       }
       this.$refs.lyricScroll.$el.style[transitionDuration] = '300ms'
       this.$refs.middleL.style[transitionDuration] = '300ms'
       this.$refs.lyricScroll.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
       this.$refs.middleL.style.opacity = opacity
+      this.touches.initable = false
     },
     back() {
       this.setFullScreen(false)
