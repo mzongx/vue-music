@@ -6,6 +6,7 @@
           class="item"
           v-for="(item, index) in topList"
           :key="index"
+          @click="selectItem(item)"
         >
           <div class="icon">
             <img width="100" height="100" v-lazy="item.picUrl" />
@@ -19,6 +20,7 @@
         </li>
       </ul>
     </scroll-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -27,6 +29,7 @@ import { getTopList } from '@/common/api/rank'
 import { ERR_OK } from '@/common/api/config'
 import scrollView from '@/base/scrollView/scrollView'
 import { playListMixin } from '@/common/js/mixins'
+import { mapMutations } from 'vuex'
 export default {
   mixins: [playListMixin],
   data() {
@@ -43,13 +46,22 @@ export default {
       this.$refs.rank.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
+    selectItem(item) {
+      this.$router.push({
+        path: `/rank/${item.id}`
+      })
+      this.setTopList(item)
+    },
     _getTopList() {
       getTopList().then((res) => {
         if (res.code === ERR_OK) {
           this.topList = res.data.topList
         }
       })
-    }
+    },
+    ...mapMutations({
+      setTopList: 'SET_TOP_LIST'
+    })
   },
   components: {
     scrollView

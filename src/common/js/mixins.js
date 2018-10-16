@@ -3,6 +3,10 @@ export const playListMixin = {
   mounted() {
     this.handlePlayList(this.playList)
   },
+  activated() {
+    // 这里也要去刷新一下，因为切换路由缓存会导致better-scroll不能滑动
+    this.handlePlayList(this.playList)
+  },
   computed: {
     ...mapGetters([
       'playList'

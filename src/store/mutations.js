@@ -32,6 +32,10 @@ const mutations = {
   [types.SET_DISC](state, disc) {
     // 设置歌单详情
     state.disc = disc
+  },
+  [types.SET_TOP_LIST](state, list) {
+    // 设置排行榜列表
+    state.topList = list
   }
 }
 export default mutations

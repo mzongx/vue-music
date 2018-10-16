@@ -27,7 +27,7 @@
     >
       <div class="songs-list-wrapper">
         <loading v-if="!songs.length" />
-        <SongList @select="selectItem" :songs="songs" />
+        <SongList :rank="rank" @select="selectItem" :songs="songs" />
       </div>
     </scrollView>
   </div>
@@ -59,6 +59,10 @@ export default {
     bgImage: {
       type: String,
       default: ''
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
