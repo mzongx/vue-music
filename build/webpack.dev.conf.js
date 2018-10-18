@@ -64,6 +64,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         })
       }))
 
+      // 获取搜索列表
+      app.get('/api/getSearch', ((req, res) => {
+        // 绕过api验证，相当于模拟qq自己的后台
+        axios.get('https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp', {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((responed) => {
+          res.json(responed.data) // res是输出给浏览器responed的data
+        }).catch((err) => {
+          console.log(err)
+        })
+      }))
+
       // 获取推荐歌单歌曲列表
       app.get('/api/getDiscInfo', ((req, res) => {
         // 绕过api验证，相当于模拟qq自己的后台

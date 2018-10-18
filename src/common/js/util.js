@@ -13,3 +13,15 @@ export function shuffle(arr) {
   }
   return _arr
 }
+
+/**
+ * 去除前后空格
+ *
+ * @export
+ * @param {*} text
+ */
+export function trim(text) {
+  let reg = /^(\s)+|(\s)+$/g
+  let ret = text.replace(reg, '')
+  return ret
+}

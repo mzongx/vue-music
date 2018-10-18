@@ -26,6 +26,11 @@ export default {
   },
   methods: {
     _getMusicList() {
+      if (!this.topList.id) {
+        this.$router.push({
+          path: '/rank'
+        })
+      }
       getMusicList(this.topList.id).then((res) => {
         if (res.code === ERR_OK) {
           this.musicList = this._normalizeSongs(res.songlist)

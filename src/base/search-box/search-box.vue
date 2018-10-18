@@ -21,6 +21,11 @@ export default {
       query: ''
     }
   },
+  watch: {
+    query(newVal) {
+      this.$emit('query', newVal)
+    }
+  },
   methods: {
     clearQuery() {
       this.query = ''

@@ -24,6 +24,10 @@ export default {
       // data变化需要刷新滚动条
       type: Array,
       default: null
+    },
+    pullUp: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -40,12 +44,20 @@ export default {
         scrollX: false,
         scrollY: true,
         click: this.click,
+        pullUpLoad: this.pullUp,
         probeType: this.probeType
       })
       if (this.listenScroll) {
         let me = this
         this.scroll.on('scroll', (pos) => {
           me.$emit('scroll', pos)
+        })
+      }
+      
+      if (this.pullUp) {
+        this.scroll.on('pullingUp', () => {
+          console.log('pullingUp')
+          this.$emit('onPullingUp')
         })
       }
     },
@@ -57,6 +69,9 @@ export default {
     },
     scrollToElement() {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    },
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp()
     }
   },
   watch: {
