@@ -40,11 +40,14 @@ export default {
       if (!this.$refs.wrapper) {
         return
       }
+      let pullUpLoadObj = {
+        threshold: 50
+      }
       this.scroll = new BScroll(this.$refs.wrapper, {
         scrollX: false,
         scrollY: true,
         click: this.click,
-        pullUpLoad: this.pullUp,
+        pullUpLoad: !this.pullUp ? this.pullUp : pullUpLoadObj,
         probeType: this.probeType
       })
       if (this.listenScroll) {
@@ -56,7 +59,6 @@ export default {
       
       if (this.pullUp) {
         this.scroll.on('pullingUp', () => {
-          console.log('pullingUp')
           this.$emit('onPullingUp')
         })
       }

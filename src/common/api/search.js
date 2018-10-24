@@ -26,9 +26,10 @@ export function getHotkey() {
  * @param {查询的关键词} query
  * @param {是否开启歌手} catZhida
  * @param {页数} page
+ * @param {条数} perpage
  * @returns
  */
-export function search(query, zhida, page) {
+export function search(query, zhida, page, perpage) {
   const url = '/api/getSearch'
   const data = Object.assign({}, commonParams, {
     uin: 0,
@@ -46,8 +47,8 @@ export function search(query, zhida, page) {
     ie: 'utf-8',
     sem: 1,
     aggr: 0,
-    perpage: 20,
-    n: 20,
+    perpage,
+    n: perpage,
     p: page,
     remoteplace: 'txt.mqq.all'
   })

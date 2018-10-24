@@ -36,7 +36,9 @@ export default {
       this.$refs.listView.refresh()
     },
     chooseSinger(singer) {
-      this.$router.push({path: `/singer/${singer.id}`})
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
       this.setSinger(singer)
     },
     _getSingerList() {

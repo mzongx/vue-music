@@ -16,10 +16,11 @@
           </ul>
         </div>
       </div>
-      <div class="search-result" v-show="query">
-        <suggest :query="query"></suggest>
-      </div>
     </div>
+    <div class="search-result" ref="searchResult" v-show="query">
+      <suggest ref="suggest" :query="query"></suggest>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -29,7 +30,9 @@ import { getHotkey } from '@/common/api/search'
 import { ERR_OK } from '@/common/api/config'
 import { trim } from '@/common/js/util'
 import suggest from '@/components/suggest/suggest'
+import { playListMixin } from '@/common/js/mixins'
 export default {
+  mixins: [playListMixin],
   data() {
     return {
       hotkey: [],
@@ -40,6 +43,11 @@ export default {
     this._getHotkey()
   },
   methods: {
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.searchResult.style.bottom = bottom
+      this.$refs.suggest.refresh()
+    },
     _getHotkey() {
       getHotkey().then((res) => {
         if (res.code === ERR_OK) {

@@ -1,7 +1,18 @@
 <template>
-  <scroll-view ref="scroll" :data="searchList" :pullUp="pullUp" @onPullingUp="pullingUp" class="suggest">
+  <scroll-view 
+    ref="scroll" 
+    :data="searchList" 
+    :pullUp="pullUp" 
+    @onPullingUp="pullingUp" 
+    class="suggest"
+  >
     <ul class="suggest-list">
-      <li v-for="(item, index) in searchList" :key="index" class="suggest-item">
+      <li 
+        v-for="(item, index) in searchList" 
+        :key="index" 
+        class="suggest-item"
+        @click="selectItem(item)"
+      >
         <div class="icon">
           <i :class="getClsIcon(item)"></i>
         </div>
@@ -9,7 +20,7 @@
           <p class="text" v-html="getTextName(item)"></p>
         </div>
       </li>
-      <!-- <loading v-show="!searchList.length"></loading> -->
+      <loading v-show="hasMore"></loading>
     </ul>
   </scroll-view>
 </template>
@@ -20,7 +31,10 @@ import { ERR_OK } from '@/common/api/config'
 import { createSong } from '@/common/js/song'
 import loading from '@/base/loading/loading'
 import scrollView from '@/base/scrollView/scrollView'
-const setSinger = 'singer'
+import { mapMutations } from 'vuex'
+import Singer from '@/common/js/singer'
+const TYPE_SINGER = 'singer'
+const PERPAGE = 20
 export default {
   props: {
     showSinger: {
@@ -36,11 +50,12 @@ export default {
     return {
       page: 1,
       pullUp: true,
-      searchList: []
+      searchList: [],
+      hasMore: true
     }
   },
   created() {
-    
+
   },
   watch: {
     query(newVal) {
@@ -49,21 +64,33 @@ export default {
     }
   },
   methods: {
+    refresh() {
+      this.$refs.scroll.refresh()
+    },
     _search() {
-      if (!this.query) {
-        return
-      }
-      search(this.query, this.showSinger, this.page).then((res) => {
+      this.hasMore = true
+      this.page = 1
+      search(this.query, this.showSinger, this.page, PERPAGE).then((res) => {
         if (res.code === ERR_OK) {
           this.searchList = this._getSearchList(res.data)
+          this._checkMore(res.data)
         }
       })
     },
     _getSearchList(data) {
       // 搜索结果有两部分组成，一是歌曲，二是歌手
       let ret = []
-      if (data.zhida && (data.zhida.albummid || data.zhida.singerid)) {
-        ret.push({...data.zhida, ...{type: setSinger}})
+
+      if (data.zhida && data.zhida.singerid) {
+        // 判断searchList有无歌手
+        let fsSingerIndex = this.searchList.findIndex((value, index, arr) => {
+          return value.singerid === data.zhida.singerid
+        })
+
+        // 如果searchList有歌手信息存在，就不添加(主要防止上拉加载更多重复加载歌手)
+        if (fsSingerIndex === -1) {
+          ret.push({...data.zhida, ...{type: TYPE_SINGER}})
+        }
       }
 
       if (data.song) {
@@ -73,14 +100,14 @@ export default {
       return ret
     },
     getClsIcon(item) {
-      if (item.type === setSinger) {
+      if (item.type === TYPE_SINGER) {
         return 'icon-mine'
       } else {
         return 'icon-music'
       }
     },
     getTextName(item) {
-      if (item.type === setSinger) {
+      if (item.type === TYPE_SINGER) {
         return item.singername
       } else {
         return `${item.name}-${item.singer}`
@@ -96,10 +123,44 @@ export default {
       })
       return ret
     },
+    _checkMore(data) {
+      // 检查是否还有更多
+      let song = data.song
+      if (!song.list.length || (song.curnum * song.curpage) >= song.totalnum) {
+        this.hasMore = false
+      }
+    },
+    selectItem(item) {
+      if (item.type === TYPE_SINGER) {
+        this.$router.push({
+          path: `/search/${item.singermid}`
+        })
+        let singer = new Singer({
+          id: item.singermid,
+          name: item.singername
+        })
+
+        this.setSinger(singer)
+      }
+    },
     pullingUp(res) {
-      console.log('res')
-      this.$refs.scroll.finishPullUp()
-    }
+      // 下拉刷新
+      if (!this.hasMore) {
+        return
+      }
+      this.page++
+      search(this.query, this.showSinger, this.page, PERPAGE).then((res) => {
+        if (res.code === ERR_OK) {
+          this.searchList = this.searchList.concat(this._getSearchList(res.data))
+          this._checkMore(res.data)
+          this.$refs.scroll.finishPullUp()
+        }
+      })
+    },
+    ...mapMutations({
+      // mutations是唯一改变state的操作，这里获取到歌手信息。
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     loading,
