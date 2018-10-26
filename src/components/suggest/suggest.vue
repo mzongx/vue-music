@@ -31,7 +31,7 @@ import { ERR_OK } from '@/common/api/config'
 import { createSong } from '@/common/js/song'
 import loading from '@/base/loading/loading'
 import scrollView from '@/base/scrollView/scrollView'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import Singer from '@/common/js/singer'
 const TYPE_SINGER = 'singer'
 const PERPAGE = 20
@@ -141,6 +141,10 @@ export default {
         })
 
         this.setSinger(singer)
+      } else {
+        this.insertSong({
+          song: item
+        })
       }
     },
     pullingUp(res) {
@@ -157,6 +161,9 @@ export default {
         }
       })
     },
+    ...mapActions([
+      'insertSong'
+    ]),
     ...mapMutations({
       // mutations是唯一改变state的操作，这里获取到歌手信息。
       setSinger: 'SET_SINGER'

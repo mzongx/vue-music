@@ -7,8 +7,9 @@ import { playMode } from '@/common/js/config'
  */
 
 // 这里是对于mutations的封装
+
 /*
- *选择列表音乐播放
+ *返回index
  */
 function findIndex(list, song) {
   return list.findIndex((item) => {
@@ -16,6 +17,9 @@ function findIndex(list, song) {
   })
 }
 
+/*
+ *选择列表音乐播放
+ */
 export const selectSong = ({
   commit,
   state
@@ -52,4 +56,43 @@ export const randomSong = ({
   commit(types.SET_PLAY_LIST, _list)
   commit(types.SET_MODE, playMode.random)
   commit(types.SET_CURRENT_INDEX, 0)
+}
+
+/*
+ * 搜索页插入音乐
+ */
+export const insertSong = ({
+  commit,
+  state
+}, {
+  song
+}) => {
+  commit(types.SET_PLAYING_STATE, true)
+  commit(types.SET_FULL_SCREEN, true)
+  
+  let playList = state.playList.slice()
+  let sequanceList = state.sequanceList.slice()
+  let currentIndex = state.currentIndex
+  let index = currentIndex
+  // 查找playList是否已存在添加的歌曲，若存在，就上去列表中的歌曲再push新歌曲
+  let playListIndex = findIndex(playList, song)
+  if ((playListIndex !== -1) && playListIndex < currentIndex) {
+    // 删除掉当前playList中存在的歌曲,[2,4,3,3]
+    playList.splice(playListIndex, 1)
+    playList.splice(currentIndex + 1, 0, song)
+    // index = currentIndex + 1
+  } else if ((playListIndex !== -1) && playListIndex > currentIndex) {
+    // 删除掉当前playList中存在的歌曲,[2,4,3,3]
+    playList.splice(playListIndex, 1)
+    playList.splice(currentIndex, 0, song)
+    // index = currentIndex + 1
+  } else {
+    playList.push(song)
+    index++
+  }
+
+  sequanceList.push(song)
+  commit(types.SET_PLAY_LIST, playList)
+  commit(types.SET_SEQUANCE_LIST, sequanceList)
+  commit(types.SET_CURRENT_INDEX, index)
 }

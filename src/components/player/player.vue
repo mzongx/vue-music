@@ -190,7 +190,7 @@ export default {
         this.getLyric()
       })
       // 解决微信退出后台播放
-      // 因为微信退出后台js是不执行的，但是audio还在播放，结束出发end的时候js执行不了
+      // 因为微信退出后台js是不执行的，但是audio还在播放，结束触发end的时候js执行不了
       // setTimeout(() => {
       //   this.$refs.audio.play()
       //   this.getLyric()
@@ -412,6 +412,9 @@ export default {
         let index = this.currentIndex + 1
         if (index === this.playList.length) index = 0
         this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -426,6 +429,9 @@ export default {
         let index = this.currentIndex - 1
         if (index === -1) index = this.playList.length - 1
         this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
