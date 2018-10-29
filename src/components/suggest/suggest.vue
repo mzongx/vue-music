@@ -22,6 +22,9 @@
       </li>
       <loading v-show="hasMore"></loading>
     </ul>
+    <div class="no-result-wrapper">
+      <no-result v-show="!hasMore && !searchList.length" title="暂无搜索结果"></no-result>
+    </div>
   </scroll-view>
 </template>
 
@@ -33,6 +36,7 @@ import loading from '@/base/loading/loading'
 import scrollView from '@/base/scrollView/scrollView'
 import { mapMutations, mapActions } from 'vuex'
 import Singer from '@/common/js/singer'
+import noResult from '@/base/no-result/no-result'
 const TYPE_SINGER = 'singer'
 const PERPAGE = 20
 export default {
@@ -171,7 +175,8 @@ export default {
   },
   components: {
     loading,
-    scrollView
+    scrollView,
+    noResult
   }
 }
 </script>

@@ -67,32 +67,60 @@ export const insertSong = ({
 }, {
   song
 }) => {
-  commit(types.SET_PLAYING_STATE, true)
-  commit(types.SET_FULL_SCREEN, true)
-  
   let playList = state.playList.slice()
   let sequanceList = state.sequanceList.slice()
   let currentIndex = state.currentIndex
-  let index = currentIndex
   // 查找playList是否已存在添加的歌曲，若存在，就上去列表中的歌曲再push新歌曲
   let playListIndex = findIndex(playList, song)
-  if ((playListIndex !== -1) && playListIndex < currentIndex) {
-    // 删除掉当前playList中存在的歌曲,[2,4,3,3]
-    playList.splice(playListIndex, 1)
-    playList.splice(currentIndex + 1, 0, song)
-    // index = currentIndex + 1
-  } else if ((playListIndex !== -1) && playListIndex > currentIndex) {
-    // 删除掉当前playList中存在的歌曲,[2,4,3,3]
-    playList.splice(playListIndex, 1)
-    playList.splice(currentIndex, 0, song)
-    // index = currentIndex + 1
-  } else {
-    playList.push(song)
-    index++
-  }
+  // 记录当前播放的歌曲
+  let currentSong = playList[currentIndex]
+  currentIndex++
+  playList.splice(currentIndex, 0, song)
 
-  sequanceList.push(song)
+  if (playListIndex > -1) {
+    // playListIndex > -1表示列表中已存在歌曲
+    if (playListIndex < currentIndex) {
+      // [1,2,3,4],如果当前播放的是3,插入的歌曲是2，变成[1,2,3,2,4]
+      playList.splice(playListIndex, 1)
+      // splice后，currentIndex要-1
+      currentIndex--
+    } else {
+      // [1,2,3,4,5],如果当前播放的是3,插入的歌曲是5，变成[1,2,3,5,4]
+      playList.splice(playListIndex, 1)
+    }
+  }
+  // 垃圾代码写法
+  // if (playListIndex > -1) {
+  //   // 歌曲已存在列表当中
+  //   if (playListIndex < currentIndex) {
+  //     playList.splice(playListIndex, 1)
+  //     playList.splice(currentIndex, 0, song)
+  //   } else {
+  //     playList.splice(playListIndex, 1)
+  //     currentIndex++
+  //     playList.splice(currentIndex, 0, song)
+  //   }
+  // } else {
+  //   currentIndex++
+  //   playList.splice(currentIndex, 0, song)
+  // }
+
+  // sequanceList列表存在歌曲的index
+  let sequanceListIndex = findIndex(sequanceList, song)
+  // 当前播放歌曲的index，这里之所以跟playList的currentindex不同，是因为playList有3中播放模式
+  let currentsIndex = findIndex(sequanceList, currentSong) + 1
+  sequanceList.splice(currentsIndex, 0, song)
+  if (sequanceListIndex > -1) {
+    if (sequanceListIndex < currentsIndex) {
+      sequanceList.splice(sequanceListIndex, 1)
+      currentsIndex--
+    } else {
+      sequanceList.splice(sequanceListIndex, 1)
+    }
+  }
+  commit(types.SET_CURRENT_INDEX, currentIndex)
   commit(types.SET_PLAY_LIST, playList)
   commit(types.SET_SEQUANCE_LIST, sequanceList)
-  commit(types.SET_CURRENT_INDEX, index)
+  commit(types.SET_PLAYING_STATE, true)
+  commit(types.SET_FULL_SCREEN, true)
 }
