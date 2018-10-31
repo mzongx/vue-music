@@ -27,7 +27,7 @@ export function trim(text) {
 }
 
 /**
- * 节流函数
+ * 节流函数：相当函数柯里化返回一个函数
  * @export
  * @param func
  * @param delay

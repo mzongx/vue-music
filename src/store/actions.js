@@ -1,12 +1,12 @@
 import * as types from './mutation-types'
 import { shuffle } from '@/common/js/util'
 import { playMode } from '@/common/js/config'
+import { saveSearch } from '@/common/js/cache'
 /*
  *actions不是直接操作state，
  *而是操作mutations
+ *说白了就是对mutations的封装
  */
-
-// 这里是对于mutations的封装
 
 /*
  *返回index
@@ -20,13 +20,7 @@ function findIndex(list, song) {
 /*
  *选择列表音乐播放
  */
-export const selectSong = ({
-  commit,
-  state
-}, {
-  list,
-  index
-}) => {
+export const selectSong = ({commit, state}, {list, index}) => {
   commit(types.SET_PLAYING_STATE, true)
   commit(types.SET_SEQUANCE_LIST, list)
   commit(types.SET_FULL_SCREEN, true)
@@ -44,11 +38,7 @@ export const selectSong = ({
 /*
 * 随机播放按钮
 */
-export const randomSong = ({
-  commit
-}, {
-  list
-}) => {
+export const randomSong = ({commit}, {list}) => {
   commit(types.SET_PLAYING_STATE, true)
   commit(types.SET_FULL_SCREEN, true)
   commit(types.SET_SEQUANCE_LIST, list)
@@ -61,12 +51,7 @@ export const randomSong = ({
 /*
  * 搜索页插入音乐
  */
-export const insertSong = ({
-  commit,
-  state
-}, {
-  song
-}) => {
+export const insertSong = ({commit, state}, {song}) => {
   let playList = state.playList.slice()
   let sequanceList = state.sequanceList.slice()
   let currentIndex = state.currentIndex
@@ -123,4 +108,14 @@ export const insertSong = ({
   commit(types.SET_SEQUANCE_LIST, sequanceList)
   commit(types.SET_PLAYING_STATE, true)
   commit(types.SET_FULL_SCREEN, true)
+}
+
+/**
+ * setSearchHistory
+ *
+ * @param {*} { commit }
+ * @param {*} { list }
+ */
+export const setSearchHistory = ({commit}, {query}) => {
+  commit(types.SET_SEARCH_HISTORY, saveSearch(query))
 }

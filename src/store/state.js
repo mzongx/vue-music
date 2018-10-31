@@ -1,6 +1,7 @@
 // 初始化state,默认所有的state都要在这里初始化
 // 用一个对象就包含了全部的应用层级状态，所有应用的状态都在这里定义
 import { playMode } from '../common/js/config'
+import store from '../common/js/store'
 const state = {
   singer: {},
   playing: false, // 是否在播放
@@ -10,6 +11,7 @@ const state = {
   mode: playMode.sequance, // 播放模式
   sequanceList: [], // 序列列表
   disc: {}, // 歌单详情
-  topList: []// 榜单歌曲列表
+  topList: [], // 榜单歌曲列表
+  searchHistory: store.get('__SEARCH__', []) // 搜索历史
 }
 export default state

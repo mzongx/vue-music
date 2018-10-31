@@ -15,6 +15,19 @@
             </li>
           </ul>
         </div>
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear">
+              <i class="icon-clear"></i>
+            </span>
+          </h1>
+          <search-list 
+            :searchs="searchHistory"
+            @deleteOne="deleteOne"
+          >
+          </search-list>
+        </div>
       </div>
     </div>
     <div class="search-result" ref="searchResult" v-show="query">
@@ -31,6 +44,8 @@ import { ERR_OK } from '@/common/api/config'
 import { trim } from '@/common/js/util'
 import suggest from '@/components/suggest/suggest'
 import { playListMixin } from '@/common/js/mixins'
+import { mapGetters } from 'vuex'
+import SearchList from '@/base/search-list/search-list'
 export default {
   mixins: [playListMixin],
   data() {
@@ -41,6 +56,11 @@ export default {
   },
   created() {
     this._getHotkey()
+  },
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
   },
   methods: {
     handlePlayList(playList) {
@@ -63,11 +83,15 @@ export default {
     },
     onQueryChange(query) {
       this.query = query
+    },
+    deleteOne(item) {
+      console.log(item)
     }
   },
   components: {
     SearchBox,
-    suggest
+    suggest,
+    SearchList
   }
 }
 </script>
