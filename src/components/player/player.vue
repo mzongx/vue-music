@@ -30,11 +30,12 @@
               <div class="playing-lyric">{{ playingLyric }}</div>
             </div>
           </div>
-          <scrollView
+          <scroll-view
             class="middle-r"
             :data="currentlyric.lines"
-            v-if="currentlyric"
-            ref="lyricScroll">
+            v-if="currentlyric || currentlyric !==null"
+            ref="lyricScroll"
+          >
             <div class="lyric-wrapper">
               <div v-if="currentlyric">
                 <p class="text"
@@ -45,7 +46,7 @@
                 </p>
               </div>
             </div>
-          </scrollView>
+          </scroll-view>
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
@@ -342,7 +343,7 @@ export default {
         }
       }).catch(() => {
         // 获取不到歌曲的时候，做清理操作
-        this.currentlyric = null
+        this.currentlyric = ''
         this.playingLyric = ''
         this.currentlyricIndex = 0
       })
