@@ -1,13 +1,18 @@
 <template>
   <div class="search-list">
-    <ul>
-      <li class="search-item" v-for="item in searchs" :key="item">
+    <transition-group tag="ul" name="fade">
+      <li 
+        class="search-item" 
+        v-for="item in searchs" 
+        :key="item"
+        @click="searchHistoryClick(item)"
+      >
         <span class="text">{{ item }}</span>
         <span class="icon" @click.stop="deleteOne(item)">
           <i class="icon-delete"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -27,6 +32,9 @@ export default {
   methods: {
     deleteOne(item) {
       this.$emit('deleteOne', item)
+    },
+    searchHistoryClick(item) {
+      this.$emit('searchHistoryClick', item)
     }
   }
 }
@@ -37,6 +45,10 @@ export default {
   @import "~common/stylus/mixin"
   .search-list
     .search-item
+      &.fade-enter-active,&.fade-leave-active
+        transition all .1s
+      &.fade-enter,&.fade-leave-to
+        height 0
       display: flex
       align-items: center
       height: 40px

@@ -24,3 +24,7 @@ export const playListMixin = {
     }
   }
 }
+
+export const searchHistoryMixin = {
+  
+}

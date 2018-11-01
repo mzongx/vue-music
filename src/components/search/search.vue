@@ -1,35 +1,39 @@
 <template>
   <div class="search">
     <search-box ref="searchBox" @query="onQueryChange"></search-box>
-    <div class="shortcut-wrapper">
-      <div class="shortcut" v-show="!query">
-        <div class="hot-key">
-          <h1 class="title">热门搜索</h1>
-          <ul>
-            <li 
-              class="item" 
-              v-for="(item, index) in hotkey" 
-              :key="index"
-              @click="setQuery(item.k)">
-              <span>{{ item.k }}</span>
-            </li>
-          </ul>
+    <div class="shortcut-wrapper" ref="shortcutWrapper" v-show="!query">
+      <scroll-view ref="scroll" class="shortcut" :data="shotcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li 
+                class="item" 
+                v-for="(item, index) in hotkey" 
+                :key="index"
+                @click="setQuery(item.k)">
+                <span>{{ item.k }}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="clearSearchAllBtn">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-list 
+              :searchs="searchHistory"
+              @deleteOne="deleteSearchOne"
+              @searchHistoryClick="setQuery"
+            >
+            </search-list>
+          </div>
         </div>
-        <div class="search-history" v-show="searchHistory.length">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="clear" @click="clearSearchAll">
-              <i class="icon-clear"></i>
-            </span>
-          </h1>
-          <search-list 
-            :searchs="searchHistory"
-            @deleteOne="deleteSearchOne"
-          >
-          </search-list>
-        </div>
-      </div>
+      </scroll-view>
     </div>
+    <confirm ref="confirm" text="确定要删除所有记录吗？" @okBtn="okBtnCallBack" okBtnText="清除"></confirm>
     <div class="search-result" ref="searchResult" v-show="query">
       <suggest ref="suggest" :query="query"></suggest>
     </div>
@@ -49,6 +53,8 @@ import {
   mapActions
 } from 'vuex'
 import SearchList from '@/base/search-list/search-list'
+import confirm from '@/base/confirm/confirm'
+import scrollView from '@/base/scrollView/scrollView'
 export default {
   mixins: [playListMixin],
   data() {
@@ -61,15 +67,30 @@ export default {
     this._getHotkey()
   },
   computed: {
+    shotcut() {
+      return this.searchHistory.concat(this.hotkey)
+    },
     ...mapGetters([
       'searchHistory'
     ])
+  },
+  watch: {
+    query(newVal) {
+      // 因为query没有的时候，shortcutWrapper是隐藏的,当前dom是suggest组件，所以要手动刷新
+      if (!newVal) {
+        setTimeout(() => {
+          this.$refs.scroll.refresh()
+        }, 20)
+      }
+    }
   },
   methods: {
     handlePlayList(playList) {
       const bottom = playList.length > 0 ? '60px' : ''
       this.$refs.searchResult.style.bottom = bottom
+      this.$refs.shortcutWrapper.style.bottom = bottom
       this.$refs.suggest.refresh()
+      this.$refs.scroll.refresh()
     },
     _getHotkey() {
       getHotkey().then((res) => {
@@ -87,8 +108,11 @@ export default {
     onQueryChange(query) {
       this.query = query
     },
-    deleteOne(item) {
-      console.log(item)
+    clearSearchAllBtn() {
+      this.$refs.confirm.show()
+    },
+    okBtnCallBack() {
+      this.clearSearchAll()
     },
     ...mapActions([
       'deleteSearchOne',
@@ -98,7 +122,9 @@ export default {
   components: {
     SearchBox,
     suggest,
-    SearchList
+    SearchList,
+    confirm,
+    scrollView
   }
 }
 </script>
