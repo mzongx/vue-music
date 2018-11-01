@@ -1,7 +1,11 @@
 import * as types from './mutation-types'
 import { shuffle } from '@/common/js/util'
 import { playMode } from '@/common/js/config'
-import { saveSearch } from '@/common/js/cache'
+import { 
+  saveSearch,
+  deleteSearch,
+  deleteSearchAll
+} from '@/common/js/cache'
 /*
  *actions不是直接操作state，
  *而是操作mutations
@@ -112,10 +116,24 @@ export const insertSong = ({commit, state}, {song}) => {
 
 /**
  * setSearchHistory
- *
+ * 设置搜索历史
  * @param {*} { commit }
  * @param {*} { list }
  */
 export const setSearchHistory = ({commit}, {query}) => {
   commit(types.SET_SEARCH_HISTORY, saveSearch(query))
+}
+
+/**
+ * 删除单个记录
+ *
+ * @param {*} {commit}
+ * @param {*} query
+ */
+export const deleteSearchOne = ({commit}, query) => {
+  commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
+}
+
+export const clearSearchAll = ({commit}) => {
+  commit(types.SET_SEARCH_HISTORY, deleteSearchAll())
 }

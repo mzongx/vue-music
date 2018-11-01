@@ -18,13 +18,13 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear">
+            <span class="clear" @click="clearSearchAll">
               <i class="icon-clear"></i>
             </span>
           </h1>
           <search-list 
             :searchs="searchHistory"
-            @deleteOne="deleteOne"
+            @deleteOne="deleteSearchOne"
           >
           </search-list>
         </div>
@@ -44,7 +44,10 @@ import { ERR_OK } from '@/common/api/config'
 import { trim } from '@/common/js/util'
 import suggest from '@/components/suggest/suggest'
 import { playListMixin } from '@/common/js/mixins'
-import { mapGetters } from 'vuex'
+import { 
+  mapGetters,
+  mapActions
+} from 'vuex'
 import SearchList from '@/base/search-list/search-list'
 export default {
   mixins: [playListMixin],
@@ -86,7 +89,11 @@ export default {
     },
     deleteOne(item) {
       console.log(item)
-    }
+    },
+    ...mapActions([
+      'deleteSearchOne',
+      'clearSearchAll'
+    ])
   },
   components: {
     SearchBox,

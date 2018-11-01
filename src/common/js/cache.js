@@ -30,6 +30,20 @@ function insertArray(arr, val, compare, MAXLEN) {
 }
 
 /**
+ * 删除单个记录
+ *
+ * @param {*} arr
+ * @param {*} val
+ * @param {*} compare
+ */
+function deleteArray(arr, val, compare) {
+  let index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1)
+  }
+}
+
+/**
  * 储存搜索记录
  * @param {*} query
  * @returns
@@ -43,6 +57,29 @@ export const saveSearch = (query) => {
   return searchHistory
 }
 
+/**
+ * 删除搜索记录
+ *
+ * @param {*} query
+ * @returns
+ */
 export const deleteSearch = (query) => {
-  
+  let searchHistory = store.get(SEARCH_KEY, [])
+  deleteArray(searchHistory, query, (item) => {
+    return item === query
+  })
+  store.set(SEARCH_KEY, searchHistory)
+  return searchHistory
+}
+
+/**
+ * 删除全部
+ *
+ * @param {*} query
+ * @returns
+ */
+export const deleteSearchAll = () => {
+  let res = []
+  store.set(SEARCH_KEY, res)
+  return res
 }
