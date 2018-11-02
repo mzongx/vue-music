@@ -95,18 +95,19 @@
           </ProgressCircle>
         </div>
         <div class="control">
-          <i class="icon-playlist"></i>
+          <i class="icon-playlist" @click.stop="showPlayList"></i>
         </div>
       </div>
     </transition>
-    <audio 
-      :src="currentSong.url" 
-      ref="audio" 
+    <audio
+      :src="currentSong.url"
+      ref="audio"
       @canplay="ready"
       @error="error"
       @timeupdate="updateTime"
       @ended="ended">
     </audio>
+    <play-list ref="playList"></play-list>
   </div>
 </template>
 
@@ -121,6 +122,7 @@ import { playMode } from '@/common/js/config'
 import { shuffle } from '@/common/js/util'
 import Lyric from 'lyric-parser'
 import scrollView from '@/base/scrollView/scrollView'
+import PlayList from '@/components/playlist/playlist'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
@@ -137,7 +139,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    scrollView
+    scrollView,
+    PlayList
   },
   created() {
     this.touches = {}
@@ -176,6 +179,10 @@ export default {
   },
   watch: {
     currentSong(newVal, oldVal) {
+      if (!newVal.length) {
+        return
+      }
+
       // 如果当前歌曲id相同，则不去执行播放，防止暂停的时候切换mode执行播放
       if (newVal.id === oldVal.id) {
         return
@@ -473,6 +480,9 @@ export default {
       if (this.currentlyric) {
         this.currentlyric.seek(this.currentTime * 1000)
       }
+    },
+    showPlayList() {
+      this.$refs.playList.show()
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
