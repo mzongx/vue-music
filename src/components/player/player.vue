@@ -33,7 +33,7 @@
           <scroll-view
             class="middle-r"
             :data="currentlyric.lines"
-            v-if="currentlyric || currentlyric !==null"
+            v-if="currentlyric || currentlyric!==null"
             ref="lyricScroll"
           >
             <div class="lyric-wrapper">
@@ -119,13 +119,14 @@ import { prefixStyle } from '@/common/js/dom'
 import ProgressBar from '@/base/progress-bar/progress-bar'
 import ProgressCircle from '@/base/progress-circle/progress-circle'
 import { playMode } from '@/common/js/config'
-import { shuffle } from '@/common/js/util'
 import Lyric from 'lyric-parser'
 import scrollView from '@/base/scrollView/scrollView'
 import PlayList from '@/components/playlist/playlist'
+import { playMixin } from '@/common/js/mixins'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
+  mixins: [playMixin],
   data() {
     return {
       songReady: false,
@@ -155,9 +156,6 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
-    playModeIcon() {
-      return this.mode === playMode.sequance ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-    },
     cdCls() {
       return this.playing ? 'play' : 'play pause'
     },
@@ -168,21 +166,17 @@ export default {
       return this.currentTime / this.currentSong.duration
     },
     ...mapGetters([
-      'playList',
       'fullScreen',
-      'currentSong',
       'playing',
-      'currentIndex',
-      'mode',
-      'sequanceList'
+      'currentIndex'
     ])
   },
   watch: {
     currentSong(newVal, oldVal) {
-      if (!newVal.length) {
+      // playlist删除最后一个的时候
+      if (newVal !== oldVal && !this.playList.length) {
         return
       }
-
       // 如果当前歌曲id相同，则不去执行播放，防止暂停的时候切换mode执行播放
       if (newVal.id === oldVal.id) {
         return
@@ -365,25 +359,6 @@ export default {
         this.$refs.lyricScroll.scrollTo(0, 0, 1000)
       }
       this.playingLyric = txt
-    },
-    changeMode() {
-      let mode = (this.mode + 1) % 3
-      this.setMode(mode)
-      let list = null
-      if (this.mode === playMode.random) {
-        list = shuffle(this.sequanceList)
-      } else {
-        list = this.sequanceList
-      }
-      // 如果直接更改playList的话，那currentSongIndex也会改，就切歌了，解决办法就是保持打乱的index==当前的currentIndex
-      this._resetCurrentIndex(list)
-      this.setPlayList(list)
-    },
-    _resetCurrentIndex(list) {
-      let index = list.findIndex((item) => {
-        return item.id === this.currentSong.id
-      })
-      this.setCurrentIndex(index)
     },
     togglePlaying() {
       if (!this.songReady) {

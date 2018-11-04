@@ -4,9 +4,9 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon" :class="playModeIcon"></i>
+            <i class="icon" @click="changeMode" :class="playModeIcon"></i>
             <span class="text">{{ playModeText }}</span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <span class="clear" @click="deleteAllList"><i class="icon-clear"></i></span>
           </h1>
         </div>
         <scroll-view ref="scroll" :data="sequanceList" class="list-content">
@@ -39,19 +39,22 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm ref="confirm" text="确定清除全部音乐吗？" okBtnText="清除" @okBtn="confirmClear"></confirm>
     </div>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
 import { 
-  mapGetters,
   mapMutations,
   mapActions   
 } from 'vuex'
 import { playMode } from '@/common/js/config'
 import ScrollView from '@/base/scrollView/scrollView'
+import confirm from '@/base/confirm/confirm'
+import { playMixin } from '@/common/js/mixins'
 export default {
+  mixins: [playMixin],
   data() {
     return {
       showFlag: false
@@ -94,12 +97,23 @@ export default {
         this.hide()
       }
     },
+    deleteAllList() {
+      this.$refs.confirm.show()
+    }, 
+    confirmClear() {
+      // 删除全部列表
+      this.deletePlayListAll()
+      if (!this.playList.length) {
+        this.hide()
+      }
+    }, 
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
     }),
     ...mapActions([
-      'deletePlayListOne'
+      'deletePlayListOne',
+      'deletePlayListAll'
     ])
   },
   watch: {
@@ -113,19 +127,11 @@ export default {
   computed: {
     playModeText() {
       return this.mode === playMode.sequance ? '顺序播放' : this.mode === playMode.loop ? '单曲循环' : '随机播放'
-    },
-    playModeIcon() {
-      return this.mode === playMode.sequance ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-    },
-    ...mapGetters([
-      'playList',
-      'sequanceList',
-      'mode',
-      'currentSong'
-    ])
+    }
   },
   components: {
-    ScrollView
+    ScrollView,
+    confirm
   }
 }
 </script>

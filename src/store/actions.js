@@ -164,8 +164,16 @@ export const deletePlayListOne = ({ commit, state }, song) => {
 
   let playListIndex = playList.length > 0
   commit(types.SET_PLAYING_STATE, playListIndex)
-  // if (!playList.length) {
-  // } else {
-  //   commit(types.SET_PLAYING_STATE, true)
-  // }
+}
+
+/**
+ * 删除全部playList
+ *
+ * @param {*} { commit, state }
+ */
+export const deletePlayListAll = ({ commit }) => {
+  commit(types.SET_CURRENT_INDEX, -1)
+  commit(types.SET_PLAY_LIST, [])
+  commit(types.SET_SEQUANCE_LIST, [])
+  commit(types.SET_PLAYING_STATE, false)
 }

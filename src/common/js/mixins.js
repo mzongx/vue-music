@@ -1,4 +1,7 @@
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
+import { playMode } from '@/common/js/config'
+import { shuffle } from '@/common/js/util'
+// mixin小播放器引起高度变化，刷新滚动条
 export const playListMixin = {
   mounted() {
     this.handlePlayList(this.playList)
@@ -25,6 +28,44 @@ export const playListMixin = {
   }
 }
 
-export const searchHistoryMixin = {
-  
+// 播放模式mixin
+export const playMixin = {
+  methods: {
+    changeMode() {
+      let mode = (this.mode + 1) % 3
+      this.setMode(mode)
+      let list = null
+      if (this.mode === playMode.random) {
+        list = shuffle(this.sequanceList)
+      } else {
+        list = this.sequanceList
+      }
+      // 如果直接更改playList的话，那currentSongIndex也会改，就切歌了，解决办法就是保持打乱的index==当前的currentIndex
+      this._resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    _resetCurrentIndex(list) {
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    ...mapMutations({
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setMode: 'SET_MODE',
+      setPlayList: 'SET_PLAY_LIST'
+    })
+  },
+  computed: {
+    playModeIcon() {
+      return this.mode === playMode.sequance ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+    },
+    ...mapGetters([
+      'playList',
+      'sequanceList',
+      'mode',
+      'currentSong'
+    ])
+  }
 }
