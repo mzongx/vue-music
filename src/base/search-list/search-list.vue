@@ -1,7 +1,7 @@
 <template>
-  <div class="search-list">
+  <div class="search-list" v-show="searchs.length">
     <transition-group tag="ul" name="fade">
-      <li 
+      <li
         class="search-item" 
         v-for="item in searchs" 
         :key="item"

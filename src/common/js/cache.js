@@ -8,6 +8,10 @@ const SEARCH_KEY = '__SEARCH__'
 // 数组最大长度
 const SEARCH_KEY_LEN = 15
 
+// 记录最近播放
+const PLAY_KEY = '__PLAY__'
+const PLAY_KEY_LEN = 200
+
 /**
  * 插入数组
  * 
@@ -25,6 +29,7 @@ function insertArray(arr, val, compare, MAXLEN) {
   }
   arr.unshift(val)
   if (MAXLEN && arr.length > MAXLEN) {
+    // 数量大于MAXLEN就删除最后一个
     arr.pop(val)
   }
 }
@@ -36,7 +41,7 @@ function insertArray(arr, val, compare, MAXLEN) {
  * @param {*} val
  * @param {*} compare
  */
-function deleteArray(arr, val, compare) {
+function deleteArray(arr, compare) {
   let index = arr.findIndex(compare)
   if (index > -1) {
     arr.splice(index, 1)
@@ -65,7 +70,7 @@ export const saveSearch = (query) => {
  */
 export const deleteSearch = (query) => {
   let searchHistory = store.get(SEARCH_KEY, [])
-  deleteArray(searchHistory, query, (item) => {
+  deleteArray(searchHistory, (item) => {
     return item === query
   })
   store.set(SEARCH_KEY, searchHistory)
@@ -73,7 +78,7 @@ export const deleteSearch = (query) => {
 }
 
 /**
- * 删除全部
+ * 删除全部搜索记录
  *
  * @param {*} query
  * @returns
@@ -82,4 +87,18 @@ export const deleteSearchAll = () => {
   let res = []
   store.set(SEARCH_KEY, res)
   return res
+}
+
+/**
+ * 储存最近播放
+ *
+ * @param {*} song
+ */
+export const savePlay = (song) => {
+  let playHistory = store.get(PLAY_KEY, [])
+  insertArray(playHistory, song, (item) => {
+    return item.id === song.id
+  }, PLAY_KEY_LEN)
+  store.set(PLAY_KEY, playHistory)
+  return playHistory
 }

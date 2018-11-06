@@ -30,7 +30,7 @@
           </transition-group>
         </scroll-view>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -40,6 +40,7 @@
         </div>
       </div>
       <confirm ref="confirm" text="确定清除全部音乐吗？" okBtnText="清除" @okBtn="confirmClear"></confirm>
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
@@ -52,6 +53,7 @@ import {
 import { playMode } from '@/common/js/config'
 import ScrollView from '@/base/scrollView/scrollView'
 import confirm from '@/base/confirm/confirm'
+import AddSong from '@/components/add-song/add-song'
 import { playMixin } from '@/common/js/mixins'
 export default {
   mixins: [playMixin],
@@ -106,7 +108,10 @@ export default {
       if (!this.playList.length) {
         this.hide()
       }
-    }, 
+    },
+    addSong() {
+      this.$refs.addSong.show()
+    },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
@@ -131,7 +136,8 @@ export default {
   },
   components: {
     ScrollView,
-    confirm
+    confirm,
+    AddSong
   }
 }
 </script>

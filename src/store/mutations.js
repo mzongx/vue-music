@@ -38,7 +38,12 @@ const mutations = {
     state.topList = list
   },
   [types.SET_SEARCH_HISTORY](state, list) {
+    // 设置搜索历史
     state.searchHistory = list
+  },
+  [types.SET_PLAY_RECENT](state, list) {
+    // 设置播放历史
+    state.playRecent = list
   }
 }
 export default mutations

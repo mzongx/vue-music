@@ -4,7 +4,8 @@ import { playMode } from '@/common/js/config'
 import { 
   saveSearch,
   deleteSearch,
-  deleteSearchAll
+  deleteSearchAll,
+  savePlay
 } from '@/common/js/cache'
 /*
  *actions不是直接操作state，
@@ -55,7 +56,7 @@ export const randomSong = ({commit}, {list}) => {
 /*
  * 搜索页插入音乐
  */
-export const insertSong = ({commit, state}, {song}) => {
+export const insertSong = ({ commit, state }, { song }) => {
   let playList = state.playList.slice()
   let sequanceList = state.sequanceList.slice()
   let currentIndex = state.currentIndex
@@ -120,7 +121,7 @@ export const insertSong = ({commit, state}, {song}) => {
  * @param {*} { commit }
  * @param {*} { list }
  */
-export const setSearchHistory = ({commit}, {query}) => {
+export const saveSearchHistory = ({commit}, {query}) => {
   commit(types.SET_SEARCH_HISTORY, saveSearch(query))
 }
 
@@ -176,4 +177,14 @@ export const deletePlayListAll = ({ commit }) => {
   commit(types.SET_PLAY_LIST, [])
   commit(types.SET_SEQUANCE_LIST, [])
   commit(types.SET_PLAYING_STATE, false)
+}
+
+/**
+ * 储存最近播放记录
+ * 
+ * @param {*} { commit }
+ * @param {*} song
+ */
+export const savePlayRecent = ({ commit }, song) => {
+  commit(types.SET_PLAY_RECENT, savePlay(song))
 }

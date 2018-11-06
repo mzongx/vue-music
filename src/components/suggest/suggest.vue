@@ -150,9 +150,7 @@ export default {
           song: item
         })
       }
-      this.setSearchHistory({
-        query: this.query
-      })
+      this.$emit('select', item)
     },
     pullingUp(res) {
       // 下拉刷新
@@ -169,8 +167,7 @@ export default {
       })
     },
     ...mapActions([
-      'insertSong',
-      'setSearchHistory'
+      'insertSong'
     ]),
     ...mapMutations({
       // mutations是唯一改变state的操作，这里获取到歌手信息。

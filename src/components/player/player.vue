@@ -174,7 +174,7 @@ export default {
   watch: {
     currentSong(newVal, oldVal) {
       // playlist删除最后一个的时候
-      if (newVal !== oldVal && !this.playList.length) {
+      if (!newVal.id) {
         return
       }
       // 如果当前歌曲id相同，则不去执行播放，防止暂停的时候切换mode执行播放

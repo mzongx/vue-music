@@ -35,7 +35,7 @@
     </div>
     <confirm ref="confirm" text="确定要删除所有记录吗？" @okBtn="okBtnCallBack" okBtnText="清除"></confirm>
     <div class="search-result" ref="searchResult" v-show="query">
-      <suggest ref="suggest" :query="query"></suggest>
+      <suggest ref="suggest" @select="setSearchHistory" :query="query"></suggest>
     </div>
     <router-view></router-view>
   </div>
@@ -45,22 +45,20 @@
 import SearchBox from '@/base/search-box/search-box'
 import { getHotkey } from '@/common/api/search'
 import { ERR_OK } from '@/common/api/config'
-import { trim } from '@/common/js/util'
 import suggest from '@/components/suggest/suggest'
-import { playListMixin } from '@/common/js/mixins'
 import { 
-  mapGetters,
-  mapActions
-} from 'vuex'
+  playListMixin,
+  searchesMixin
+} from '@/common/js/mixins'
+import { mapActions } from 'vuex'
 import SearchList from '@/base/search-list/search-list'
 import confirm from '@/base/confirm/confirm'
 import scrollView from '@/base/scrollView/scrollView'
 export default {
-  mixins: [playListMixin],
+  mixins: [playListMixin, searchesMixin],
   data() {
     return {
-      hotkey: [],
-      query: ''
+      hotkey: []
     }
   },
   created() {
@@ -69,10 +67,7 @@ export default {
   computed: {
     shotcut() {
       return this.searchHistory.concat(this.hotkey)
-    },
-    ...mapGetters([
-      'searchHistory'
-    ])
+    }
   },
   watch: {
     query(newVal) {
@@ -98,12 +93,6 @@ export default {
           this.hotkey = res.data.hotkey.splice(0, 10)
         }
       })
-    },
-    setQuery(query) {
-      this.$refs.searchBox.setQuery(this.hotName(query))
-    },
-    hotName(text) {
-      return trim(text)
     },
     onQueryChange(query) {
       this.query = query

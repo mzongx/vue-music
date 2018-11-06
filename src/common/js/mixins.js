@@ -1,6 +1,7 @@
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { playMode } from '@/common/js/config'
-import { shuffle } from '@/common/js/util'
+import { shuffle, trim } from '@/common/js/util'
+
 // mixin小播放器引起高度变化，刷新滚动条
 export const playListMixin = {
   mounted() {
@@ -66,6 +67,38 @@ export const playMixin = {
       'sequanceList',
       'mode',
       'currentSong'
+    ])
+  }
+}
+
+// 搜索mixins
+export const searchesMixin = {
+  data() {
+    return {
+      query: ''
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
+  methods: {
+    setQuery(query) {
+      this.$refs.searchBox.setQuery(this.hotName(query))
+    },
+    hotName(text) {
+      return trim(text)
+    },
+    setSearchHistory(song) {
+      this.saveSearchHistory({
+        query: this.query
+      })
+      this.savePlayRecent(song)
+    },
+    ...mapActions([
+      'saveSearchHistory',
+      'savePlayRecent'
     ])
   }
 }

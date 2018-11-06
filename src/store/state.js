@@ -12,6 +12,7 @@ const state = {
   sequanceList: [], // 序列列表
   disc: {}, // 歌单详情
   topList: [], // 榜单歌曲列表
-  searchHistory: store.get('__SEARCH__', []) // 搜索历史
+  searchHistory: store.get('__SEARCH__', []), // 搜索历史
+  playRecent: store.get('__PLAY__') // 最近播放记录
 }
 export default state
