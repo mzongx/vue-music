@@ -9,7 +9,7 @@
         <search-box ref="searchBox" placeholder="搜索歌曲" @query="onQueryChange"></search-box>
       </div>
       <div class="shortcut" v-show="!query">
-        <switches @switchesActive="switchesToggle"></switches>
+        <switches @switchesItem="switchesToggle" :currentIndex="switchesActive"></switches>
         <div class="list-wrapper" v-if="switchesActive === 0">
           <scroll-view ref="scroll" :data="playRecent" class="list-scroll">
             <div class="list-inner">
@@ -46,6 +46,7 @@ import ScrollView from '@/base/scrollView/scrollView'
 import SongList from '@/base/song-list/song-list'
 import { mapActions, mapGetters } from 'vuex'
 import { searchesMixin } from '@/common/js/mixins'
+import Song from '@/common/js/song'
 export default {
   mixins: [searchesMixin],
   data() {
@@ -87,16 +88,13 @@ export default {
       this.switchesActive = index
     },
     selectItem(song, index) {
-      console.log(song)
       this.insertSong({
-        song: song
+        song: new Song(song)
       })
-      this.savePlayRecent(song)
     },
     ...mapActions([
       'deleteSearchOne',
-      'insertSong',
-      'savePlayRecent'
+      'insertSong'
     ])
   },
   components: {

@@ -112,7 +112,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 // create-keyframe-animation以css3写法写animation
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from '@/common/js/dom'
@@ -421,6 +421,7 @@ export default {
     ready() {
       // 歌曲已准备好播放
       this.songReady = true
+      this.savePlayRecent(this.currentSong)
     },
     error() {
       // 当歌曲加载失败的时候也置为true，保证正常使用
@@ -459,6 +460,9 @@ export default {
     showPlayList() {
       this.$refs.playList.show()
     },
+    ...mapActions([
+      'savePlayRecent'
+    ]),
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',

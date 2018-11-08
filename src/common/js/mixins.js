@@ -90,15 +90,13 @@ export const searchesMixin = {
     hotName(text) {
       return trim(text)
     },
-    setSearchHistory(song) {
+    setSearchHistory() {
       this.saveSearchHistory({
         query: this.query
       })
-      this.savePlayRecent(song)
     },
     ...mapActions([
-      'saveSearchHistory',
-      'savePlayRecent'
+      'saveSearchHistory'
     ])
   }
 }

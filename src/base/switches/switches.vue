@@ -7,7 +7,7 @@
       :class="activeClass(index)" 
       @click="toggleSwitch(index)"
     >
-      {{ item }}
+      {{ item.name }}
     </li>
   </ul>
 </template>
@@ -18,22 +18,23 @@ export default {
     switches: {
       type: Array,
       default: () => {
-        return ['最近播放', '搜索历史']
+        return [
+          {name: '最近播放'},
+          {name: '搜索历史'}
+        ]
       }
-    }
-  },
-  data() {
-    return {
-      switchesActive: 0
+    },
+    currentIndex: {
+      type: Number,
+      default: 0
     }
   },
   methods: {
     toggleSwitch(index) {
-      this.switchesActive = index
-      this.$emit('switchesActive', index)
+      this.$emit('switchesItem', index)
     },
     activeClass(index) {
-      return index === this.switchesActive ? 'active' : ''
+      return index === this.currentIndex ? 'active' : ''
     }
   },
   components: {
